@@ -16,12 +16,14 @@ Each API record becomes a typed Python object, so you can write `driver.team_nam
 
 Requires Python 3.10 or later.
 
-openf1py is not on PyPI yet. Install it from a local copy of the source:
+```bash
+pip install openf1py
+```
+
+To get the latest unreleased changes, install from GitHub instead:
 
 ```bash
-git clone <repository-url>
-cd OpenF1
-pip install -e .
+pip install git+https://github.com/Aditya-Singh-3112/OpenF1Py.git
 ```
 
 The only dependency is [httpx](https://www.python-httpx.org/).
@@ -219,9 +221,11 @@ Read the key from an environment variable rather than writing it in your code.
 
 ## Development
 
-Install the development dependencies:
+Clone the repository and install it in editable mode with the development dependencies:
 
 ```bash
+git clone https://github.com/Aditya-Singh-3112/OpenF1Py.git
+cd OpenF1Py
 pip install -e ".[dev]"
 ```
 
@@ -235,7 +239,7 @@ The unit tests never call the real API. They use `httpx.MockTransport` with samp
 
 ### Smoke test against the live API
 
-[examples/smoke_test.py](examples/smoke_test.py) uses the library the way a user would, calling every endpoint on the real API and checking that the results make sense:
+[examples/smoke_test.py](https://github.com/Aditya-Singh-3112/OpenF1Py/blob/master/examples/smoke_test.py) uses the library the way a user would, calling every endpoint on the real API and checking that the results make sense:
 
 ```bash
 python examples/smoke_test.py
@@ -252,7 +256,7 @@ src/openf1py/
     resources.py    One resource class per endpoint, each with list() and its filters
     model.py        One dataclass per endpoint, built on the OpenF1Model base class
     exceptions.py   OpenF1PyException and APIError
-tests/              One unit test file per endpoint, plus test_model.py
+tests/              One unit test file per endpoint, plus test_client.py and test_model.py
 examples/           smoke_test.py
 ```
 
