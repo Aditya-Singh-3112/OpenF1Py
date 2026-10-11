@@ -55,3 +55,11 @@ def test_unknown_fields_are_ignored():
     sessions = make_client(handler).sessions.list()
 
     assert sessions[0].session_name == "Sprint Qualifying"
+
+def test_list_sessions_raises_api_error_on_failure():
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(500, json={"error": "Internal Server Error"})
+
+    client = make_client(handler)
+    with pytest.raises(APIError):
+        client.sessions.list()

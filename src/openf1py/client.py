@@ -1,9 +1,13 @@
 import httpx
 from .exceptions import APIError
-from .resources import DriversResource, SessionsResource, CarDataResource
+from .resources import (
+    ChampionshipTeamResource, DriversResource, SessionsResource, CarDataResource, DriverChampionshipResource,
+    IntervalsResource, LapsResource, LocationResource, MeetingsResource, OvertakesResource, PitResource, PositionResource,
+    RaceControlResource, SessionResultResource, StartingGridResource, StintsResource, TeamRadioResource, WeatherResource,
+)
 
 class OpenF1Client:
-    BASE_URL = "https://api.openf1.com/v1"
+    BASE_URL = "https://api.openf1.org/v1"
 
     def __init__(self, token: str | None = None, 
                  timeout: float = 30.0,
@@ -13,12 +17,39 @@ class OpenF1Client:
         self.drivers = DriversResource(self)
         self.sessions = SessionsResource(self)
         self.car_data = CarDataResource(self)
+        self.drivers_championship = DriverChampionshipResource(self)
+        self.teams_championship = ChampionshipTeamResource(self)
+        self.intervals = IntervalsResource(self)
+        self.laps = LapsResource(self)
+        self.location = LocationResource(self)
+        self.meetings = MeetingsResource(self)
+        self.overtakes = OvertakesResource(self)
+        self.pit = PitResource(self)
+        self.position = PositionResource(self)
+        self.race_control = RaceControlResource(self)
+        self.session_result = SessionResultResource(self)
+        self.starting_grid = StartingGridResource(self)
+        self.stints = StintsResource(self)
+        self.team_radio = TeamRadioResource(self)
+        self.weather = WeatherResource(self)
 
     def get(self, endpoint: str, **params) -> list[dict]:
         response = self._http.get(f"/{endpoint}", params=params)
+        if self._is_no_results(response):
+            return []
         if response.is_error:
             raise APIError(response.status_code, response.text)
         return response.json()
+
+    @staticmethod
+    def _is_no_results(response: httpx.Response) -> bool:
+        # OpenF1 answers a query that matches nothing with a 404 instead of an empty list
+        if response.status_code != 404:
+            return False
+        try:
+            return response.json().get("detail") == "No results found."
+        except ValueError:
+            return False
 
     def close(self):
         self._http.close()

@@ -45,7 +45,7 @@ def test_list_car_data_sends_only_given_filters():
 
 def test_unknown_fields_are_ignored():
     def handler(request: httpx.Request) -> httpx.Response:
-        return httpx.Response(200, json=[SAMPLE_CAR_DATA])
+        return httpx.Response(200, json=[{**SAMPLE_CAR_DATA, "brand_new_field": "x"}])
 
     car_data_list = make_client(handler).car_data.list()
 
